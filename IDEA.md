@@ -66,7 +66,48 @@ It's going to be **huge, highly detailed**, and designed to be sold as a premium
 
 ---
 
-## 📋 Setup Checklist
+## � Deployment Strategy
+
+### Phase 1 — MVP / Pre-launch (FREE or near-free)
+
+| Component   | Service     | Cost        | Notes                                      |
+| ----------- | ----------- | ----------- | ------------------------------------------ |
+| Next.js App | **Vercel**  | $0/mo       | Push to GitHub → auto-deploy. Zero config. |
+| PostgreSQL  | **Neon**    | $0/mo       | Free tier: 0.5 GB storage, autoscaling.    |
+| Auth        | NextAuth.js | $0          | Self-hosted, no external service needed.   |
+| AI (OpenAI) | OpenAI API  | Pay-per-use | ~$0.01-0.03 per commentary generation.     |
+| Payments    | Stripe      | 1.4%+€0.25  | Only pay when you earn.                    |
+| **Total**   |             | **~$0/mo**  | Until you have real traffic.               |
+
+### Phase 2 — Growth (when free tiers are outgrown)
+
+| Component   | Service              | Cost      |
+| ----------- | -------------------- | --------- |
+| Next.js App | Vercel Pro           | $20/mo    |
+| PostgreSQL  | Neon Pro or Supabase | $10-25/mo |
+| Domain      | Custom domain        | ~€10/year |
+
+### Phase 3 — Scale / Cost optimization
+
+Move to a **VPS + Docker** (e.g., Hetzner €4/mo) if Vercel costs become too high.
+Docker setup is ready from day one (`Dockerfile` + `docker-compose.yml`).
+
+### Docker (already set up)
+
+```bash
+# Local dev with Docker (app + PostgreSQL)
+docker compose up
+
+# Build production image
+docker build -t astralchart .
+
+# Run production image
+docker run -p 3000:3000 --env-file .env.local astralchart
+```
+
+---
+
+## �📋 Setup Checklist
 
 - [x] Create IDEA.md
 - [x] Initialize Git repository
@@ -76,6 +117,8 @@ It's going to be **huge, highly detailed**, and designed to be sold as a premium
 - [x] Create folder structure
 - [x] Add .gitignore, .env.example, README.md
 - [x] Prepare for GitHub push
+- [x] Dockerize (Dockerfile + docker-compose.yml)
+- [x] Plan deployment strategy
 - [ ] Set up database (Prisma + PostgreSQL)
 - [ ] Set up authentication
 - [ ] Set up payment integration

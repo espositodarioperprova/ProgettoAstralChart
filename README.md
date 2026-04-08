@@ -72,6 +72,33 @@ src/
 
 This is a private commercial project. See IDEA.md for the product vision.
 
+## Deployment
+
+### Vercel (Recommended — Free Tier)
+
+1. Push this repo to GitHub
+2. Go to [vercel.com](https://vercel.com), import the repo
+3. Add environment variables (`DATABASE_URL`, etc.) in Vercel's dashboard
+4. Done — auto-deploys on every push to `main`
+
+### Docker (Self-hosted)
+
+```bash
+# Local dev (app + PostgreSQL)
+docker compose up
+
+# Production build
+docker build -t astralchart .
+docker run -p 3000:3000 --env-file .env.local astralchart
+```
+
+### Database (Neon — Free Tier)
+
+1. Sign up at [neon.tech](https://neon.tech)
+2. Create a project, copy the connection string
+3. Set `DATABASE_URL` in your `.env.local` or Vercel dashboard
+4. Run `pnpm db:push` to sync the schema
+
 ## License
 
 All rights reserved. This is proprietary software.

@@ -1,0 +1,136 @@
+// Prisma schema for AstralChart
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── User & Auth ────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  passwordHash  String?
+  image         String?
+  emailVerified DateTime?
+
+  // Subscription / payment tier
+  tier          Tier      @default(FREE)
+  stripeCustomerId String? @unique
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  familyMembers FamilyMember[]
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ─── Payment Tier ───────────────────────────────────────────
+
+enum Tier {
+  FREE
+  PREMIUM
+}
+
+// ─── Family Members ─────────────────────────────────────────
+
+model FamilyMember {
+  id        String   @id @default(cuid())
+  userId    String
+
+  // Personal info
+  name      String
+  relationship String?  // e.g., "Madre", "Padre", "Fratello"
+
+  // Birth data (essential for natal chart)
+  birthDate DateTime             // Date of birth
+  birthTime String?              // Exact time, e.g. "14:35" (nullable — some people don't know)
+  birthCity String               // City name
+  birthLat  Float                // Latitude of birth location
+  birthLng  Float                // Longitude of birth location
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // A family member can appear in synastry reports as either person
+  synastryAsPersonA SynastryReport[] @relation("PersonA")
+  synastryAsPersonB SynastryReport[] @relation("PersonB")
+
+  @@map("family_members")
+}
+
+// ─── Synastry Reports (cached AI analysis) ──────────────────
+
+model SynastryReport {
+  id        String   @id @default(cuid())
+
+  personAId String
+  personBId String
+
+  // The AI-generated report content (in Italian)
+  content   String   @db.Text
+
+  // Metadata
+  model     String?  // Which AI model was used
+  createdAt DateTime @default(now())
+
+  // Relations
+  personA   FamilyMember @relation("PersonA", fields: [personAId], references: [id], onDelete: Cascade)
+  personB   FamilyMember @relation("PersonB", fields: [personBId], references: [id], onDelete: Cascade)
+
+  @@unique([personAId, personBId])
+  @@map("synastry_reports")
+}
