@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌟 AstralChart
+
+**Carta Astrale Familiare Interattiva** — A web application (in Italian) for computing detailed natal charts and AI-powered synastry analysis between family members.
+
+## Tech Stack
+
+- **Next.js 16** (App Router) with **TypeScript** (strict)
+- **Tailwind CSS 4** for styling
+- **Prisma** + PostgreSQL for data persistence
+- **NextAuth.js** for authentication
+- **Stripe** for payments
+- **OpenAI API** for AI-generated commentary
+- **pnpm** as package manager
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js ≥ 20
+- pnpm ≥ 10
+- PostgreSQL (for later — not needed yet)
+
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Clone the repo
+git clone https://github.com/espositodarioperprova/ProgettoAstralChart.git
+cd ProgettoAstralChart
+
+# Install dependencies
+pnpm install
+
+# Copy environment variables
+cp .env.example .env.local
+
+# Start development server
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command       | Description                       |
+| ------------- | --------------------------------- |
+| `pnpm dev`    | Start dev server (with Turbopack) |
+| `pnpm build`  | Production build                  |
+| `pnpm start`  | Start production server           |
+| `pnpm lint`   | Run ESLint                        |
+| `pnpm format` | Format code with Prettier         |
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/              # Next.js App Router (pages & layouts)
+├── components/       # Reusable React components
+│   ├── ui/           # Base UI components
+│   ├── charts/       # Astral chart visualizations
+│   └── layout/       # Layout components
+├── lib/              # Utility functions & shared logic
+│   ├── astrology/    # Chart calculation engine
+│   ├── ai/           # AI commentary integration
+│   └── payments/     # Stripe integration
+├── services/         # API service layer
+├── types/            # TypeScript type definitions
+├── hooks/            # Custom React hooks
+└── styles/           # Global styles
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This is a private commercial project. See IDEA.md for the product vision.
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+All rights reserved. This is proprietary software.
