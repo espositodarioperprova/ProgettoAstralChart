@@ -136,7 +136,7 @@ export function HeroSection() {
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-4xl px-6 pt-24 pb-16 text-center">
         {/* Social proof badge */}
-        <ScrollReveal variant="fadeIn" duration={0.5}>
+        <ScrollReveal variant="fadeIn" duration={0.5} immediate>
           <div className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2 backdrop-blur-md">
             <span className="animate-pulse-glow inline-block h-2 w-2 rounded-full bg-emerald-400" />
             <span className="text-sm font-medium text-indigo-200">
@@ -145,7 +145,7 @@ export function HeroSection() {
           </div>
         </ScrollReveal>
 
-        <ScrollReveal variant="fadeUp" duration={0.8}>
+        <ScrollReveal variant="fadeUp" duration={0.8} immediate>
           <h1 className="text-5xl leading-[1.1] font-extrabold tracking-tight text-white sm:text-6xl lg:text-7xl">
             Scopri le stelle
             <br />
@@ -155,7 +155,7 @@ export function HeroSection() {
           </h1>
         </ScrollReveal>
 
-        <ScrollReveal variant="fadeUp" delay={0.2}>
+        <ScrollReveal variant="fadeUp" delay={0.2} immediate>
           <p className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-indigo-100/80 sm:text-xl">
             Inserisci le date di nascita dei tuoi familiari e scopri come i
             vostri segni zodiacali si intrecciano.{" "}
@@ -166,7 +166,7 @@ export function HeroSection() {
           </p>
         </ScrollReveal>
 
-        <ScrollReveal variant="fadeUp" delay={0.4}>
+        <ScrollReveal variant="fadeUp" delay={0.4} immediate>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a
               href="/calcola"
@@ -185,7 +185,7 @@ export function HeroSection() {
         </ScrollReveal>
 
         {/* Zodiac symbols row */}
-        <ScrollReveal variant="fadeUp" delay={0.6}>
+        <ScrollReveal variant="fadeUp" delay={0.6} immediate>
           <div className="mx-auto mt-16 flex max-w-md items-center justify-center gap-3 opacity-60">
             {[
               "♈",

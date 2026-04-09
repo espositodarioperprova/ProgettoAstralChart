@@ -48,7 +48,7 @@ export default function CalcolaPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-slate-50 to-white">
       {/* Header */}
       <header className="border-b border-slate-100 bg-white/80 backdrop-blur-sm">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
@@ -58,16 +58,51 @@ export default function CalcolaPage() {
           >
             🌟 AstralChart
           </Link>
+
+          {/* Navigation links */}
+          <nav className="hidden items-center gap-6 md:flex">
+            <Link
+              href="/"
+              className="text-sm text-slate-500 transition-colors hover:text-slate-900"
+            >
+              Home
+            </Link>
+            <Link
+              href="/#come-funziona"
+              className="text-sm text-slate-500 transition-colors hover:text-slate-900"
+            >
+              Come funziona
+            </Link>
+            <Link
+              href="/#prezzi"
+              className="text-sm text-slate-500 transition-colors hover:text-slate-900"
+            >
+              Prezzi
+            </Link>
+            <Link
+              href="/#faq"
+              className="text-sm text-slate-500 transition-colors hover:text-slate-900"
+            >
+              FAQ
+            </Link>
+          </nav>
+
           <div className="flex items-center gap-3">
             <span className="hidden text-sm text-slate-500 sm:inline">
               {members.length}/{maxMembers} membri
             </span>
-            {/* TODO: Add auth button (Accedi / Registrati) */}
+            {/* Mobile back link */}
+            <Link
+              href="/"
+              className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-50 md:hidden"
+            >
+              ← Home
+            </Link>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-6 py-10">
+      <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">
         {/* Page title */}
         <div className="mb-10 text-center">
           <motion.h1
@@ -171,12 +206,14 @@ export default function CalcolaPage() {
             </div>
           </div>
 
-          {/* Right column: Results */}
-          <div ref={resultsRef} className="lg:col-span-3">
+          {/* Right column: Results — stretches to match left column height */}
+          <div ref={resultsRef} className="flex lg:col-span-3">
             {showResults ? (
-              <ResultsPanel members={members} isCalculating={isCalculating} />
+              <div className="w-full">
+                <ResultsPanel members={members} isCalculating={isCalculating} />
+              </div>
             ) : (
-              <div className="flex min-h-[400px] items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 px-6 py-16 text-center">
+              <div className="flex w-full flex-1 items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 px-6 py-16 text-center">
                 <div>
                   <div className="mx-auto mb-4 text-5xl">🌌</div>
                   <h3 className="text-lg font-semibold text-slate-600">
@@ -194,7 +231,7 @@ export default function CalcolaPage() {
       </main>
 
       {/* Footer — minimal for the app page */}
-      <footer className="mt-20 border-t border-slate-100 py-6 text-center text-xs text-slate-400">
+      <footer className="mt-auto border-t border-slate-100 py-6 text-center text-xs text-slate-400">
         <p>
           AstralChart © {new Date().getFullYear()} • L&apos;astrologia è per
           intrattenimento, non sostituisce consigli professionali.

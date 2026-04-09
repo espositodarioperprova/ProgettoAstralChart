@@ -45,6 +45,11 @@ interface ScrollRevealProps {
   duration?: number;
   className?: string;
   once?: boolean;
+  /**
+   * If true, animates immediately on mount instead of waiting
+   * for the element to scroll into view. Use for above-the-fold content.
+   */
+  immediate?: boolean;
 }
 
 /**
@@ -62,12 +67,14 @@ export function ScrollReveal({
   duration = 0.6,
   className,
   once = true,
+  immediate = false,
 }: ScrollRevealProps) {
   return (
     <motion.div
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once, margin: "-100px" }}
+      {...(immediate
+        ? { animate: "visible" }
+        : { whileInView: "visible", viewport: { once, margin: "-50px" } })}
       transition={{
         duration,
         delay,
