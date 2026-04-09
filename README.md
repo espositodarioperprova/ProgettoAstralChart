@@ -8,7 +8,7 @@
 - **Tailwind CSS 4** for styling
 - **Prisma** + PostgreSQL for data persistence
 - **NextAuth.js** for authentication
-- **Stripe** for payments
+- **Lemon Squeezy** for payments (Merchant of Record — handles VAT)
 - **OpenAI API** for AI-generated commentary
 - **pnpm** as package manager
 
@@ -61,7 +61,7 @@ src/
 ├── lib/              # Utility functions & shared logic
 │   ├── astrology/    # Chart calculation engine
 │   ├── ai/           # AI commentary integration
-│   └── payments/     # Stripe integration
+│   └── payments/     # Lemon Squeezy integration
 ├── services/         # API service layer
 ├── types/            # TypeScript type definitions
 ├── hooks/            # Custom React hooks

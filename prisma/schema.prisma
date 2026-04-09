@@ -21,8 +21,8 @@ model User {
   emailVerified DateTime?
 
   // Subscription / payment tier
-  tier          Tier      @default(FREE)
-  stripeCustomerId String? @unique
+  tier                  Tier      @default(FREE)
+  lemonSqueezyCustomerId String?  @unique
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

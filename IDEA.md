@@ -13,83 +13,117 @@ It's going to be **huge, highly detailed**, and designed to be sold as a premium
 
 ---
 
-## ❓ Open Questions (TO BE ANSWERED)
+## ❓ Open Questions — ANSWERED ✅
 
-> These questions need to be resolved to shape the product. Answer them as we go.
+> Resolved on 2026-04-08. Includes Dario's answers + critical review notes from Copilot.
 
 ### Product & Business
 
-1. **Target audience**: Is this for everyday families (mass market, simple UX) or for astrology enthusiasts who already know what a "trine" is? Both? Do we segment?
-2. **Tone of voice**: Should the AI commentary be mystical/poetic, or conversational/friendly, or scientific/analytical? Mix depending on user preference?
-3. **Monetization model**: One-time purchase per report? Monthly subscription? Freemium with upsell? What's the "trigger" that makes someone pay?
-4. **Family size limits**: Free tier = how many family members? 2? 3? Premium = unlimited?
-5. **PDF export**: Should the premium report be a beautiful PDF (branded, printable, gift-worthy)? This could be a strong upsell.
-6. **Name/brand**: "AstralChart" is the working name. Final brand name for Italian market? "AstroFamiglia"? "Carta Astrale"? Something else?
-7. **Domain**: Have we picked/bought a domain?
+1. **Target audience**: ✅ **Both, segmented.** Accessible enough for curious newcomers, rich enough for enthusiasts. We don't dumb it down, but we don't throw "trines" at first-time users either. Start with zodiac sign + ascendant; Moon, Mars, etc. come in later iterations. Progressive disclosure.
+
+2. **Tone of voice**: ✅ **Authoritative but friendly.** A blend of conversational and scientific. Not boringly academic, not mystical fluff. Think: "a knowledgeable friend who happens to be an astrologer." Confident, warm, credible.
+
+3. **Monetization model**: ✅ **Freemium with content gating.**
+   - **Free tier**: Individual natal charts for each member + **1 synastry pair** (a taste of the relationship analysis). Short/truncated AI commentary.
+   - **Paid tier**: Full synastry between ALL family members (every pair), deep/extended AI commentary, "life advice" section (personalized AI-generated guidance).
+   - The free version hooks you by showing the _quality_ of one pair, then gates the rest.
+   - Future upsells: premium PDF export, physical gadgets (long-term, separate business line).
+     > 📝 _Copilot note: This is a solid freemium structure. The synastry is the unique value — gating it behind payment is the right call. One free pair lets users verify quality before paying._
+
+4. **Family size limits**: ✅ **Free = up to 4 members. Paid = up to 6 members.**
+   - Free users get individual charts for up to 4 people + 1 synastry pair preview.
+   - Paid users unlock all pairwise synastry + up to 6 members (15 unique pairs at max).
+     > 📝 _Copilot note: Good compromise. 4 free members is generous enough to hook families, but the synastry paywall is the real lever. AI compute costs scale with pairs (n×(n-1)/2), so the cap at 6 is also operationally smart._
+
+5. **PDF export**: ✅ **Nice-to-have for later. Not the free/paid differentiator.**
+   - Will be a premium feature when built, but not the primary monetization lever.
+   - The paywall is the synastry depth + AI commentary, not the format.
+     > 📝 _Copilot note: Agreed — now that #3 and #4 have a clear paywall, PDF can safely be a bonus perk rather than the gate._
+
+6. **Name/brand**: ⏳ **"AstralChart" is the working name. THIS IS NOT A FINAL ANSWER YET.**
+   - Must be resolved before any marketing spend or public launch.
+   - "AstralChart" is generic and English — not ideal for an Italian-market product.
+   - Dario will decide the final brand name soon.
+     > 📝 _Copilot note: Clock is ticking on this. Domain availability, social handles, and brand recognition all depend on nailing the name. Do it before launch, not after._
+
+7. **Domain**: ✅ **No custom domain yet.** Using free Vercel domain (`.vercel.app`) for now. Will buy a custom domain before public launch.
 
 ### Astrology Specifics
 
-8. **What if someone doesn't know their exact birth time?** We need graceful degradation:
-   - **Base tier (no time)**: Sun sign only (just date of birth) → basic zodiac
-   - **Mid tier (date + time)**: Sun + Moon + Ascendant + houses
-   - **Full tier (date + time + location)**: Complete natal chart with all planetary positions
-9. **Tropical vs Sidereal zodiac?** Tropical is standard in Western astrology. Do we offer both?
-10. **Which house system?** Placidus is most common. Offer alternatives?
-11. **Asteroids / Chiron / Lilith?** Include or keep it simple?
+8. **Birth time unknown — graceful degradation**: ✅ **Mid tier (date + time) is the standard experience.** We design for users who know their birth time.
+   - Users without birth time are not our primary audience, but we **don't design them out**.
+   - A degraded date-only experience (sun sign + basic traits) should exist as a fallback — build it later, not first.
+   - MVP focuses on: date + time → Sun + Moon + Ascendant + houses.
+     > 📝 _Copilot note: Good call. "Not mainly for them" ≠ "exclude them." Keep the door open architecturally (optional time field), build the degraded path in a later sprint._
+
+9. **Tropical vs Sidereal**: ✅ **Tropical only.** Standard Western astrology. No need to offer Sidereal.
+
+10. **House system**: ✅ **Placidus only.** Most common, no alternatives needed for MVP.
+
+11. **Asteroids / Chiron / Lilith**: ✅ **Keep it simple.** Core planets only (Sun through Pluto). No asteroids, no Chiron, no Lilith for MVP. Can be added later as a "deep analysis" premium feature.
 
 ### UX & Design
 
-12. **Visual style**: Mystical/dark (stars, cosmos, deep blues/purples)? Or clean/modern/light? Or a toggle?
-13. **Chart visualization**: Do we render actual circular natal charts (SVG/Canvas)? Or just tables/text?
-14. **Interactive chart?** Can users click on a planet to get more info?
-15. **Comparison view**: Side-by-side charts? Overlay? Or purely text-based?
-16. **Mobile priority**: Is this primarily mobile (phone) or desktop? 50/50?
+12. **Visual style**: ✅ **Cozy, friendly, light cosmos theme.** Light blues and purples, cosmic motifs, but NOT deep/dark/mystical. No negative or heavy tones. Think: "a warm night sky, not a black hole."
+
+    > 📝 _Copilot note: This differentiates from 90% of astrology sites that go full dark-mode-mystical. Smart positioning for a mass-market Italian audience._
+
+13. **Chart visualization**: ✅ **No circular chart rendering for MVP.** Text/cards only. Circular natal chart SVG is a v2 priority.
+
+    > 📝 _Copilot note: Accepted for MVP, but flagged — every competitor shows a circular chart. This is table stakes in astrology. Prioritize for v2._
+
+14. **Interactive chart**: ✅ **No.** Not needed for MVP. Revisit when chart visualization is built.
+
+15. **Comparison view**: ✅ **Text-based for MVP, but MUST be printable.** Clean layout that looks good on paper/PDF. This is a hard requirement.
+
+16. **Mobile priority**: ✅ **50/50 mobile and desktop.** Responsive design, no platform priority. Both experiences must be first-class.
 
 ### Legal & Privacy
 
-17. **GDPR**: Birth data is personal data. Privacy policy, data deletion, consent flows needed.
-18. **Cookie consent**: Required for EU. Which solution?
-19. **Terms of service**: Especially for paid features.
+17. **GDPR**: ✅ **Must be addressed before launch.** We DO store personal data (names, birth dates, birth times, birth locations, family relationships — all in the `FamilyMember` table linked to user accounts). This is personal data under GDPR, full stop.
+
+- **Minimum before launch**: Privacy policy page + "delete my data" mechanism + consent at signup.
+- **Not needed now**: Full DPO, cookie granularity controls, data portability export.
+- Birth data may be considered sensitive (can reveal beliefs). Don't ignore this.
+  > 📝 _Copilot note: Dario initially wanted to skip this. Overruled. It's not optional under EU law, and it's not hard to do. A privacy page + delete endpoint is a weekend's work._
+
+18. **Cookie consent**: ✅ **Yes, implement a cookie consent banner.** Required for EU. Use a lightweight solution (e.g., `cookie-consent` library or custom banner). Don't overcomplicate it.
+
+19. **Terms of service**: ✅ **Placeholder for now.** Will write real TOS before paid features go live. A basic placeholder page at `/termini` is fine for MVP.
 
 ---
 
 ## 🎯 Core Features (High Level — not implemented yet)
 
-### Feature Layers (Progressive Complexity)
+### Feature Layers (Progressive Complexity) — REVISED
 
-#### 🟢 Layer 1 — "Curiosi" (Free / No Account Required)
+#### 🟢 Free Tier (No Account Required for quick try, Account Required to save)
 
-> For people who just want a quick zodiac check.
+> Hook them with quality. Let them taste the synastry, then gate the rest.
 
-- Input: **date of birth only**
-- Output: Sun sign, basic personality traits (AI-generated, in Italian)
-- No registration required
-- Limit: 1-2 family members, no synastry
-- Goal: **hook them**, show the quality, upsell to Layer 2
+- Input: **date + time of birth** (time strongly encouraged, date-only fallback later)
+- Output per person: Sun sign, Moon sign, Ascendant, basic personality traits (AI-generated, Italian)
+- **Up to 4 family members**
+- **1 synastry pair unlocked** (user picks which two members to compare)
+- Remaining pairs: teased with a blurred/truncated preview + "Sblocca tutto" CTA
+- Short AI commentary (truncated — enough to impress, not enough to satisfy)
+- No PDF export
+- Goal: **hook them**, show the quality of the synastry, make them want the rest
 
-#### 🟡 Layer 2 — "Appassionati" (Free Account Required)
+#### 🔴 Premium Tier (Paid — one-time or subscription TBD)
 
-> For people who want to go deeper.
+> The full experience. Every pair, every insight, every detail.
 
-- Input: **date + time of birth**
-- Output: Sun sign + Moon sign + Ascendant, basic house placements
-- Requires account (save data)
-- Limit: up to 3-4 family members
-- Basic pairwise synastry (text only, limited AI commentary)
-- Goal: **engage them**, upsell to Layer 3
-
-#### 🔴 Layer 3 — "Premium" (Paid)
-
-> The full experience.
-
-- Input: **date + time + location of birth**
-- Output: Complete natal chart (all planets, houses, aspects)
-- Full synastry between ALL family members (every pair)
-- Deep AI commentary (detailed, personalized, Italian)
-- Interactive chart visualization
-- PDF export (beautiful, printable, gift-worthy)
-- Unlimited family members
+- **Up to 6 family members** (15 unique pairs at max)
+- Full synastry between ALL pairs, not just one
+- Deep, extended AI commentary (detailed, personalized, Italian)
+- "Life advice" section: AI-generated personalized guidance based on chart interplay
+- Printable comparison view (clean layout for paper/PDF)
+- PDF export (beautiful, branded — when built)
 - Priority AI generation
+- Goal: **convert and retain**
+
+> 📝 _Note: The old 3-layer model (Curiosi/Appassionati/Premium) has been simplified to 2 tiers. Simpler = less user confusion, clearer paywall, easier to implement. The key gate is: 1 free synastry pair vs. all pairs unlocked._
 
 ### Feature Breakdown
 
@@ -116,10 +150,10 @@ It's going to be **huge, highly detailed**, and designed to be sold as a premium
    - Different depth levels per tier
 
 5. **E-Commerce / Monetization**
-   - Free tier (Layer 1 + limited Layer 2)
-   - Premium tier (full Layer 3)
-   - Payment integration (Stripe)
-   - Subscription or one-time purchase models
+   - **Free tier**: Individual charts (up to 4 members) + 1 synastry pair + truncated AI commentary
+   - **Premium tier**: All synastry pairs (up to 6 members) + full AI commentary + life advice + PDF
+   - Payment integration (Lemon Squeezy — Merchant of Record, handles VAT/IVA)
+   - Pricing model TBD (one-time per report? monthly sub? both?)
 
 6. **User Accounts & Auth**
    - Registration / Login (email + Google OAuth?)
@@ -190,7 +224,7 @@ It's going to be **huge, highly detailed**, and designed to be sold as a premium
 | Smooth scroll    | Lenis                                |
 | Database         | PostgreSQL (Neon) via Prisma 7       |
 | Auth             | NextAuth.js (or similar)             |
-| Payments         | Stripe                               |
+| Payments         | Lemon Squeezy (MoR — handles VAT)    |
 | AI               | OpenAI API (or similar LLM)          |
 | Astrology Engine | TBD (Swiss Ephemeris bindings?)      |
 | Deployment       | Vercel (free tier)                   |
@@ -203,14 +237,14 @@ It's going to be **huge, highly detailed**, and designed to be sold as a premium
 
 ### Phase 1 — MVP / Pre-launch (FREE or near-free)
 
-| Component   | Service     | Cost        | Notes                                      |
-| ----------- | ----------- | ----------- | ------------------------------------------ |
-| Next.js App | **Vercel**  | $0/mo       | Push to GitHub → auto-deploy. Zero config. |
-| PostgreSQL  | **Neon**    | $0/mo       | Free tier: 0.5 GB storage, autoscaling.    |
-| Auth        | NextAuth.js | $0          | Self-hosted, no external service needed.   |
-| AI (OpenAI) | OpenAI API  | Pay-per-use | ~$0.01-0.03 per commentary generation.     |
-| Payments    | Stripe      | 1.4%+€0.25  | Only pay when you earn.                    |
-| **Total**   |             | **~$0/mo**  | Until you have real traffic.               |
+| Component   | Service           | Cost        | Notes                                                      |
+| ----------- | ----------------- | ----------- | ---------------------------------------------------------- |
+| Next.js App | **Vercel**        | $0/mo       | Push to GitHub → auto-deploy. Zero config.                 |
+| PostgreSQL  | **Neon**          | $0/mo       | Free tier: 0.5 GB storage, autoscaling.                    |
+| Auth        | NextAuth.js       | $0          | Self-hosted, no external service needed.                   |
+| AI (OpenAI) | OpenAI API        | Pay-per-use | ~$0.01-0.03 per commentary generation.                     |
+| Payments    | **Lemon Squeezy** | 5%+$0.50    | MoR: handles VAT/IVA collection & filing. No P.IVA needed. |
+| **Total**   |                   | **~$0/mo**  | Until you have real traffic.                               |
 
 ### Phase 2 — Growth (when free tiers are outgrown)
 
@@ -258,10 +292,10 @@ docker run -p 3000:3000 --env-file .env.local astralchart
 - [x] Animation boilerplate (Framer Motion + GSAP + Lenis) ✅
 - [x] Smooth scroll infrastructure ✅
 - [x] Landing page with scroll-driven sections ✅
-- [ ] Answer open questions (see above)
+- [x] Answer open questions ✅ (resolved 2026-04-08)
 - [ ] Set up authentication (NextAuth.js)
 - [ ] Build family member input form (datepicker, clock, map)
-- [ ] Set up payment integration (Stripe)
+- [ ] Set up payment integration (Lemon Squeezy)
 - [ ] Implement astrology engine
 - [ ] Implement AI commentary
 - [ ] Build chart visualization
@@ -284,7 +318,7 @@ ProgettoAstralChart/
 │   ├── lib/              # Utility functions & shared logic
 │   │   ├── astrology/    # Chart calculation engine
 │   │   ├── ai/           # AI commentary integration
-│   │   └── payments/     # Stripe integration
+│   │   └── payments/     # Lemon Squeezy integration
 │   ├── services/         # API service layer
 │   ├── types/            # TypeScript type definitions
 │   ├── hooks/            # Custom React hooks

@@ -8,88 +8,95 @@ import {
 
 const features = [
   {
-    icon: "🌙",
-    title: "Carta natale completa",
+    icon: "☀️",
+    title: "Segno solare e personalità",
     description:
-      "Sole, Luna, Ascendente, tutti i pianeti, le case e gli aspetti. Non solo il segno zodiacale.",
-    tier: "premium",
+      "Scopri il segno zodiacale di ogni familiare e un profilo caratteriale completo, scritto dall'AI in italiano naturale — non la solita frase copia-incolla.",
+    tier: "free" as const,
+  },
+  {
+    icon: "🌙",
+    title: "Luna e Ascendente",
+    description:
+      "Con l'ora di nascita sbloccherai il segno lunare (le tue emozioni profonde) e l'Ascendente (come ti presenti al mondo). Due dimensioni che cambiano tutto.",
+    tier: "free" as const,
   },
   {
     icon: "💞",
     title: "Sinastria familiare",
     description:
-      "Analisi delle interazioni astrali tra ogni coppia di membri della tua famiglia.",
-    tier: "premium",
+      "La magia di AstralChart: confrontiamo le carte astrali di ogni coppia di familiari e analizziamo affinità, sfide e dinamiche relazionali.",
+    tier: "premium" as const,
   },
   {
     icon: "🤖",
-    title: "Commenti AI",
+    title: "Commenti AI personalizzati",
     description:
-      "Interpretazioni profonde e personalizzate, generate dall'intelligenza artificiale. In italiano.",
-    tier: "premium",
+      "Niente oroscopi generici. L'intelligenza artificiale genera interpretazioni profonde basate sui TUOI dati astrologici reali. Ogni famiglia è unica.",
+    tier: "premium" as const,
   },
   {
-    icon: "♈",
-    title: "Segno zodiacale",
+    icon: "👨‍👩‍👧‍👦",
+    title: "Fino a 6 membri",
     description:
-      "Scopri il segno solare di ogni membro della famiglia. Gratis, senza registrazione.",
-    tier: "free",
-  },
-  {
-    icon: "📊",
-    title: "Grafici interattivi",
-    description:
-      "Visualizza le carte astrali con grafici circolari interattivi e bellissimi.",
-    tier: "premium",
+      "Mamma, papà, fratelli, partner, nonni — aggiungi fino a 4 familiari gratis (6 con Premium). 15 possibili sinastrie da esplorare!",
+    tier: "free" as const,
   },
   {
     icon: "📄",
-    title: "Esporta in PDF",
+    title: "Report stampabile",
     description:
-      "Scarica un report completo da stampare o regalare ai tuoi familiari.",
-    tier: "premium",
+      "I risultati sono progettati per essere stampati e regalati. Un'idea perfetta per compleanni, Natale o semplicemente per sorprendere chi ami.",
+    tier: "premium" as const,
   },
 ];
 
 export function FeaturesSection() {
   return (
-    <section
-      id="funzionalita"
-      className="relative bg-gradient-to-b from-slate-900 to-indigo-950 py-24 sm:py-32"
-    >
+    <section id="funzionalita" className="relative py-28 sm:py-36">
       <div className="mx-auto max-w-7xl px-6">
         <ScrollReveal variant="fadeUp">
           <div className="text-center">
-            <p className="text-sm font-semibold tracking-widest text-indigo-400 uppercase">
+            <p className="text-sm font-semibold tracking-widest text-indigo-300 uppercase">
               Funzionalità
             </p>
-            <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">
-              Tutto ciò che ti serve
+            <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
+              Tutto ciò che ti serve per esplorare le stelle
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-indigo-200/70">
+            <p className="mx-auto mt-4 max-w-2xl text-base text-indigo-200/60">
               Da una semplice curiosità sul segno zodiacale a un&apos;analisi
-              astrologica completa della tua famiglia.
+              astrologica completa di tutta la famiglia. Inizia gratis, vai in
+              profondità quando vuoi.
             </p>
           </div>
         </ScrollReveal>
 
         <StaggerContainer
           stagger={0.1}
-          className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          className="mt-20 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
           {features.map((feature) => (
             <StaggerItem key={feature.title}>
-              <div className="group relative rounded-2xl border border-white/10 bg-white/5 p-6 transition-all hover:border-indigo-500/30 hover:bg-white/[0.07]">
-                {feature.tier === "free" && (
-                  <span className="absolute top-4 right-4 rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-xs font-semibold text-emerald-400">
+              <div className="group relative flex h-full flex-col rounded-3xl border border-white/10 bg-white/[0.04] p-7 backdrop-blur-sm transition-all hover:border-indigo-400/30 hover:bg-white/[0.08]">
+                {/* Tier badge */}
+                {feature.tier === "free" ? (
+                  <span className="absolute top-5 right-5 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300">
                     Gratis
                   </span>
+                ) : (
+                  <span className="absolute top-5 right-5 rounded-full bg-indigo-500/15 px-3 py-1 text-xs font-semibold text-indigo-300">
+                    Premium
+                  </span>
                 )}
-                <span className="text-3xl">{feature.icon}</span>
-                <h3 className="mt-4 text-lg font-semibold text-white">
+
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/10 text-2xl">
+                  {feature.icon}
+                </div>
+
+                <h3 className="mt-5 text-lg font-bold text-white">
                   {feature.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-indigo-200/70">
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-indigo-200/60">
                   {feature.description}
                 </p>
               </div>

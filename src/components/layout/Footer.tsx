@@ -1,112 +1,69 @@
-export function Footer() {
-  const currentYear = new Date().getFullYear();
+import Link from "next/link";
 
+const footerLinks = {
+  Prodotto: [
+    { label: "Come funziona", href: "#come-funziona" },
+    { label: "Funzionalità", href: "#funzionalita" },
+    { label: "Prezzi", href: "#prezzi" },
+    { label: "FAQ", href: "#faq" },
+  ],
+  Legale: [
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Termini di Servizio", href: "/termini" },
+    { label: "Cookie Policy", href: "/cookie" },
+  ],
+  Supporto: [
+    { label: "Contattaci", href: "#contatti" },
+    { label: "Segnala un problema", href: "#contatti" },
+  ],
+};
+
+export function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-slate-900 py-12">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="relative border-t border-white/10 py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div>
-            <h3 className="text-lg font-bold text-white">🌟 AstralChart</h3>
-            <p className="mt-2 text-sm leading-relaxed text-indigo-200/60">
-              Scopri le connessioni astrali tra i membri della tua famiglia.
+            <Link href="/" className="text-lg font-bold text-white">
+              ✦ AstralChart
+            </Link>
+            <p className="mt-3 text-sm leading-relaxed text-indigo-200/50">
+              Scopri le dinamiche astrologiche della tua famiglia con
+              l&apos;intelligenza artificiale.
             </p>
           </div>
 
-          {/* Product */}
-          <div>
-            <h4 className="text-sm font-semibold tracking-wider text-indigo-400 uppercase">
-              Prodotto
-            </h4>
-            <ul className="mt-3 space-y-2">
-              <li>
-                <a
-                  href="#come-funziona"
-                  className="text-sm text-indigo-200/60 transition-colors hover:text-white"
-                >
-                  Come funziona
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#funzionalita"
-                  className="text-sm text-indigo-200/60 transition-colors hover:text-white"
-                >
-                  Funzionalità
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#prezzi"
-                  className="text-sm text-indigo-200/60 transition-colors hover:text-white"
-                >
-                  Prezzi
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h4 className="text-sm font-semibold tracking-wider text-indigo-400 uppercase">
-              Supporto
-            </h4>
-            <ul className="mt-3 space-y-2">
-              <li>
-                <a
-                  href="#faq"
-                  className="text-sm text-indigo-200/60 transition-colors hover:text-white"
-                >
-                  FAQ
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#contatti"
-                  className="text-sm text-indigo-200/60 transition-colors hover:text-white"
-                >
-                  Contatti
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h4 className="text-sm font-semibold tracking-wider text-indigo-400 uppercase">
-              Legale
-            </h4>
-            <ul className="mt-3 space-y-2">
-              <li>
-                <a
-                  href="/privacy"
-                  className="text-sm text-indigo-200/60 transition-colors hover:text-white"
-                >
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/termini"
-                  className="text-sm text-indigo-200/60 transition-colors hover:text-white"
-                >
-                  Termini di Servizio
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/cookie"
-                  className="text-sm text-indigo-200/60 transition-colors hover:text-white"
-                >
-                  Cookie Policy
-                </a>
-              </li>
-            </ul>
-          </div>
+          {/* Link columns */}
+          {Object.entries(footerLinks).map(([title, links]) => (
+            <div key={title}>
+              <h4 className="text-xs font-semibold tracking-widest text-indigo-300 uppercase">
+                {title}
+              </h4>
+              <ul className="mt-4 space-y-2.5">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      className="text-sm text-indigo-200/50 transition-colors hover:text-white"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        <div className="mt-12 border-t border-white/10 pt-8 text-center text-xs text-indigo-200/40">
-          © {currentYear} AstralChart. Tutti i diritti riservati.
+        {/* Bottom */}
+        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 sm:flex-row">
+          <p className="text-xs text-indigo-200/30">
+            © {new Date().getFullYear()} AstralChart. Tutti i diritti riservati.
+          </p>
+          <p className="text-xs text-indigo-200/30">
+            Fatto con ♥ e un po&apos; di polvere di stelle
+          </p>
         </div>
       </div>
     </footer>

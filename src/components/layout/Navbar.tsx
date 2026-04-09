@@ -16,10 +16,11 @@ export function Navbar() {
   const ref = useRef(null);
 
   // Navbar becomes solid after scrolling past the hero
+  // #1e1b4b = indigo-950, matching the unified page gradient
   const backgroundColor = useTransform(
     scrollY,
     [0, 100],
-    ["rgba(15, 23, 42, 0)", "rgba(15, 23, 42, 0.95)"],
+    ["rgba(30, 27, 75, 0)", "rgba(30, 27, 75, 0.95)"],
   );
   const backdropBlur = useTransform(
     scrollY,
@@ -54,10 +55,10 @@ export function Navbar() {
 
         {/* CTA */}
         <a
-          href="#prezzi"
-          className="rounded-full bg-indigo-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-500"
+          href="/calcola"
+          className="rounded-full bg-white px-5 py-2 text-sm font-bold text-indigo-900 shadow-lg shadow-white/10 transition-all hover:shadow-xl hover:shadow-white/20"
         >
-          Inizia gratis
+          Calcola gratis
         </a>
       </div>
     </motion.nav>
