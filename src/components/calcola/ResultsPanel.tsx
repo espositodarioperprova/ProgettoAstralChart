@@ -4,10 +4,19 @@ import { motion } from "framer-motion";
 import type { FamilyMemberInput, ZodiacSign } from "@/types/astrology";
 import { getSunSign, getZodiacSymbol, getElement } from "@/lib/astrology";
 import { ZODIAC_SIGNS } from "@/types/astrology";
+import type { ComputedChart } from "@/lib/astrology/chart-engine";
 
 interface ResultsPanelProps {
   members: FamilyMemberInput[];
   isCalculating: boolean;
+  /** Computed chart data per member ID */
+  charts: Record<string, ComputedChart>;
+  /** AI commentary per member ID (individual) */
+  commentaries: Record<string, string>;
+  /** AI synastry commentary per pair key "idA-idB" */
+  synastryCommentaries: Record<string, string>;
+  /** Whether AI commentary is loading */
+  isGeneratingAI: boolean;
 }
 
 function getSignDescription(sign: ZodiacSign): string {
@@ -62,8 +71,50 @@ function ElementBadge({ element }: { element: string }) {
   );
 }
 
-function IndividualResult({ member }: { member: FamilyMemberInput }) {
-  const sunSign = getSunSign(member.birthDate);
+function DataQualityBadge({
+  quality,
+}: {
+  quality: "date-only" | "date-time" | "full";
+}) {
+  const config = {
+    "date-only": {
+      label: "Solo data",
+      color: "bg-slate-100 text-slate-500",
+      icon: "☀️",
+    },
+    "date-time": {
+      label: "Data + ora",
+      color: "bg-blue-50 text-blue-500",
+      icon: "🌙",
+    },
+    full: {
+      label: "Carta completa",
+      color: "bg-emerald-50 text-emerald-600",
+      icon: "⭐",
+    },
+  };
+  const c = config[quality];
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${c.color}`}
+    >
+      {c.icon} {c.label}
+    </span>
+  );
+}
+
+function IndividualResult({
+  member,
+  chart,
+  commentary,
+  isGeneratingAI,
+}: {
+  member: FamilyMemberInput;
+  chart?: ComputedChart;
+  commentary?: string;
+  isGeneratingAI: boolean;
+}) {
+  const sunSign = chart?.sunSign ?? getSunSign(member.birthDate);
   const symbol = getZodiacSymbol(sunSign);
   const element = getElement(sunSign);
   const signInfo = ZODIAC_SIGNS.find((s) => s.name === sunSign);
@@ -84,14 +135,17 @@ function IndividualResult({ member }: { member: FamilyMemberInput }) {
           <h3 className="text-lg font-bold text-slate-900">{member.name}</h3>
           <p className="text-sm text-slate-500">{member.relationship}</p>
         </div>
+        {chart && (
+          <div className="ml-auto">
+            <DataQualityBadge quality={chart.dataQuality} />
+          </div>
+        )}
       </div>
 
       {/* Sun sign result */}
       <div className="space-y-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm font-medium text-slate-700">
-            ☀️ Segno solare:
-          </span>
+          <span className="text-sm font-medium text-slate-700">☀️ Sole:</span>
           <span className="text-sm font-bold text-indigo-600">
             {symbol} {sunSign}
           </span>
@@ -101,29 +155,85 @@ function IndividualResult({ member }: { member: FamilyMemberInput }) {
               ({signInfo.dateRange})
             </span>
           )}
+          {chart && chart.sunDegree > 0 && (
+            <span className="text-xs text-slate-400">
+              {chart.sunDegree.toFixed(1)}°
+            </span>
+          )}
         </div>
 
         <p className="text-sm leading-relaxed text-slate-600">{description}</p>
 
-        {/* Placeholder for Moon + Ascendant (requires birth time) */}
-        {member.birthTime ? (
-          <div className="mt-3 rounded-xl border border-dashed border-indigo-200 bg-indigo-50/50 p-4">
-            <p className="text-sm font-medium text-indigo-600">
-              🌙 Luna e Ascendente
-            </p>
-            <p className="mt-1 text-xs text-indigo-400">
-              Calcolo avanzato in arrivo — richiede un motore di effemeridi.
-              L&apos;ora di nascita ({member.birthTime}) è stata registrata.
-            </p>
+        {/* Moon sign */}
+        {chart?.moonSign ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-medium text-slate-700">🌙 Luna:</span>
+            <span className="text-sm font-bold text-purple-600">
+              {getZodiacSymbol(chart.moonSign)} {chart.moonSign}
+            </span>
+            <ElementBadge element={getElement(chart.moonSign)} />
+            {chart.moonDegree != null && (
+              <span className="text-xs text-slate-400">
+                {chart.moonDegree.toFixed(1)}°
+              </span>
+            )}
+            {chart.moonOnCusp && (
+              <span
+                className="text-xs text-amber-500"
+                title="La Luna è vicina a un cambio di segno — possibile variazione."
+              >
+                ⚠️ cuspide
+              </span>
+            )}
           </div>
         ) : (
-          <div className="mt-3 rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs text-slate-400">
-              💡 Aggiungi l&apos;ora di nascita per ottenere Luna, Ascendente e
-              case.
-            </p>
+          <div className="flex items-center gap-2 text-sm text-slate-400">
+            <span>🌙 Luna:</span>
+            <span className="italic">aggiungi ora di nascita</span>
           </div>
         )}
+
+        {/* Ascendant */}
+        {chart?.ascendant ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-medium text-slate-700">
+              ⬆️ Ascendente:
+            </span>
+            <span className="text-sm font-bold text-emerald-600">
+              {getZodiacSymbol(chart.ascendant)} {chart.ascendant}
+            </span>
+            <ElementBadge element={getElement(chart.ascendant)} />
+            {chart.ascendantDegree != null && (
+              <span className="text-xs text-slate-400">
+                {chart.ascendantDegree.toFixed(1)}°
+              </span>
+            )}
+          </div>
+        ) : chart?.moonSign ? (
+          <div className="flex items-center gap-2 text-sm text-slate-400">
+            <span>⬆️ Ascendente:</span>
+            <span className="italic">aggiungi luogo di nascita</span>
+          </div>
+        ) : null}
+
+        {/* AI Commentary */}
+        {commentary ? (
+          <div className="mt-4 rounded-xl border border-indigo-100 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 p-4">
+            <p className="mb-2 text-xs font-semibold tracking-wide text-indigo-500 uppercase">
+              ✨ Commento astrologico
+            </p>
+            <p className="text-sm leading-relaxed whitespace-pre-line text-slate-700">
+              {commentary}
+            </p>
+          </div>
+        ) : isGeneratingAI ? (
+          <div className="mt-4 flex items-center gap-2 rounded-xl border border-dashed border-indigo-200 bg-indigo-50/50 p-4">
+            <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-indigo-400 border-t-transparent" />
+            <p className="text-xs text-indigo-500">
+              L&apos;astrologo AI sta analizzando la carta…
+            </p>
+          </div>
+        ) : null}
       </div>
     </motion.div>
   );
@@ -133,10 +243,14 @@ function SynastryPreview({
   memberA,
   memberB,
   isLocked,
+  commentary,
+  isGeneratingAI,
 }: {
   memberA: FamilyMemberInput;
   memberB: FamilyMemberInput;
   isLocked: boolean;
+  commentary?: string;
+  isGeneratingAI: boolean;
 }) {
   const signA = getSunSign(memberA.birthDate);
   const signB = getSunSign(memberB.birthDate);
@@ -219,19 +333,38 @@ function SynastryPreview({
                 ? `${elementA} e ${elementB} sono elementi complementari. Questa combinazione porta equilibrio e arricchimento reciproco.`
                 : `${elementA} e ${elementB} hanno energie diverse. Questa combinazione richiede comprensione e adattamento, ma può portare grande crescita.`}
           </p>
-          <div className="mt-3 rounded-xl border border-dashed border-indigo-200 bg-indigo-50/50 p-3">
-            <p className="text-xs text-indigo-500">
-              ✨ Commento AI dettagliato in arrivo — richiede collegamento
-              OpenAI.
-            </p>
-          </div>
+          {/* AI Commentary */}
+          {commentary ? (
+            <div className="mt-3 rounded-xl border border-indigo-100 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 p-4">
+              <p className="mb-2 text-xs font-semibold tracking-wide text-indigo-500 uppercase">
+                ✨ Analisi sinastrica AI
+              </p>
+              <p className="text-sm leading-relaxed whitespace-pre-line text-slate-700">
+                {commentary}
+              </p>
+            </div>
+          ) : isGeneratingAI ? (
+            <div className="mt-3 flex items-center gap-2 rounded-xl border border-dashed border-indigo-200 bg-indigo-50/50 p-3">
+              <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-indigo-400 border-t-transparent" />
+              <p className="text-xs text-indigo-500">
+                Analisi sinastrica in corso…
+              </p>
+            </div>
+          ) : null}
         </div>
       )}
     </motion.div>
   );
 }
 
-export function ResultsPanel({ members, isCalculating }: ResultsPanelProps) {
+export function ResultsPanel({
+  members,
+  isCalculating,
+  charts,
+  commentaries,
+  synastryCommentaries,
+  isGeneratingAI,
+}: ResultsPanelProps) {
   if (members.length === 0) {
     return null;
   }
@@ -265,7 +398,13 @@ export function ResultsPanel({ members, isCalculating }: ResultsPanelProps) {
             </h2>
             <div className="grid gap-4 lg:grid-cols-2">
               {members.map((member) => (
-                <IndividualResult key={member.id} member={member} />
+                <IndividualResult
+                  key={member.id}
+                  member={member}
+                  chart={charts[member.id]}
+                  commentary={commentaries[member.id]}
+                  isGeneratingAI={isGeneratingAI}
+                />
               ))}
             </div>
           </div>
@@ -277,14 +416,19 @@ export function ResultsPanel({ members, isCalculating }: ResultsPanelProps) {
                 ✨ Sinastrie
               </h2>
               <div className="grid gap-4 lg:grid-cols-2">
-                {pairs.map(([a, b], index) => (
-                  <SynastryPreview
-                    key={`${a.id}-${b.id}`}
-                    memberA={a}
-                    memberB={b}
-                    isLocked={index >= 1} // First pair is free, rest locked
-                  />
-                ))}
+                {pairs.map(([a, b], index) => {
+                  const pairKey = `${a.id}-${b.id}`;
+                  return (
+                    <SynastryPreview
+                      key={pairKey}
+                      memberA={a}
+                      memberB={b}
+                      isLocked={index >= 1}
+                      commentary={synastryCommentaries[pairKey]}
+                      isGeneratingAI={isGeneratingAI}
+                    />
+                  );
+                })}
               </div>
               {pairs.length > 1 && (
                 <div className="mt-4 text-center">

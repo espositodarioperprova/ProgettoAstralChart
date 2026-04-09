@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { FamilyMemberInput, Relationship } from "@/types/astrology";
 import { RELATIONSHIPS } from "@/types/astrology";
+import { searchCities, type CityData } from "@/lib/geo/italian-cities";
 
 interface AddMemberFormProps {
   onAdd: (member: FamilyMemberInput) => void;
@@ -25,7 +26,45 @@ export function AddMemberForm({
   const [relationship, setRelationship] = useState<Relationship>("Altro");
   const [birthDate, setBirthDate] = useState("");
   const [birthTime, setBirthTime] = useState("");
+  const [birthCity, setBirthCity] = useState("");
+  const [selectedCity, setSelectedCity] = useState<CityData | null>(null);
+  const [citySuggestions, setCitySuggestions] = useState<CityData[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(e.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  function handleCityInput(value: string) {
+    setBirthCity(value);
+    setSelectedCity(null);
+    if (value.length >= 2) {
+      const results = searchCities(value);
+      setCitySuggestions(results);
+      setShowSuggestions(results.length > 0);
+    } else {
+      setCitySuggestions([]);
+      setShowSuggestions(false);
+    }
+  }
+
+  function handleCitySelect(city: CityData) {
+    setBirthCity(`${city.name} (${city.province})`);
+    setSelectedCity(city);
+    setShowSuggestions(false);
+  }
 
   function validate(): boolean {
     const newErrors: Record<string, string> = {};
@@ -64,6 +103,11 @@ export function AddMemberForm({
       relationship,
       birthDate,
       birthTime: birthTime || undefined,
+      birthCity: selectedCity
+        ? `${selectedCity.name} (${selectedCity.province})`
+        : birthCity || undefined,
+      birthLat: selectedCity?.lat,
+      birthLng: selectedCity?.lng,
     };
 
     onAdd(member);
@@ -73,6 +117,8 @@ export function AddMemberForm({
     setRelationship("Altro");
     setBirthDate("");
     setBirthTime("");
+    setBirthCity("");
+    setSelectedCity(null);
     setErrors({});
   }
 
@@ -154,7 +200,7 @@ export function AddMemberForm({
         </div>
 
         {/* Birth time (optional) */}
-        <div className="sm:col-span-2">
+        <div>
           <label
             htmlFor="member-birthtime"
             className="mb-1.5 block text-sm font-medium text-slate-700"
@@ -176,11 +222,67 @@ export function AddMemberForm({
           {errors.birthTime && (
             <p className="mt-1 text-sm text-red-500">{errors.birthTime}</p>
           )}
-          <p className="mt-1.5 text-xs text-slate-400">
-            Con l&apos;ora di nascita possiamo calcolare Luna, Ascendente e
-            case.
-          </p>
         </div>
+
+        {/* Birth city (optional, with autocomplete) */}
+        <div className="relative" ref={suggestionsRef}>
+          <label
+            htmlFor="member-birthcity"
+            className="mb-1.5 block text-sm font-medium text-slate-700"
+          >
+            Luogo di nascita{" "}
+            <span className="font-normal text-slate-400">(opzionale)</span>
+          </label>
+          <input
+            id="member-birthcity"
+            type="text"
+            value={birthCity}
+            onChange={(e) => handleCityInput(e.target.value)}
+            onFocus={() => {
+              if (citySuggestions.length > 0) setShowSuggestions(true);
+            }}
+            placeholder="es. Roma, Milano..."
+            autoComplete="off"
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm transition-colors placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 focus:outline-none"
+          />
+          {selectedCity && (
+            <p className="mt-1 text-xs text-emerald-600">
+              📍 {selectedCity.name} ({selectedCity.lat.toFixed(2)}°N,{" "}
+              {selectedCity.lng.toFixed(2)}°E)
+            </p>
+          )}
+
+          {/* Autocomplete dropdown */}
+          {showSuggestions && (
+            <div className="absolute right-0 left-0 z-20 mt-1 max-h-48 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg">
+              {citySuggestions.map((city) => (
+                <button
+                  key={`${city.name}-${city.province}`}
+                  type="button"
+                  onClick={() => handleCitySelect(city)}
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm transition-colors hover:bg-indigo-50"
+                >
+                  <span className="text-slate-400">📍</span>
+                  <span className="font-medium text-slate-900">
+                    {city.name}
+                  </span>
+                  <span className="text-xs text-slate-400">
+                    ({city.province})
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Helper text */}
+      <div className="rounded-lg bg-indigo-50/50 p-3">
+        <p className="text-xs leading-relaxed text-indigo-600/70">
+          💡 <strong>Solo la data è obbligatoria.</strong> Con l&apos;ora e il
+          luogo di nascita sblocchi Luna, Ascendente e case — un&apos;analisi
+          molto più ricca.
+        </p>
       </div>
 
       {/* Submit */}

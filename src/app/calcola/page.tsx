@@ -7,6 +7,8 @@ import { useFamilyMembers } from "@/hooks/useFamilyMembers";
 import { AddMemberForm } from "@/components/calcola/AddMemberForm";
 import { MembersList } from "@/components/calcola/MembersList";
 import { ResultsPanel } from "@/components/calcola/ResultsPanel";
+import type { ComputedChart } from "@/lib/astrology/chart-engine";
+import type { FamilyMemberInput } from "@/types/astrology";
 
 export default function CalcolaPage() {
   const {
@@ -20,11 +22,64 @@ export default function CalcolaPage() {
 
   const [showResults, setShowResults] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+  const [charts, setCharts] = useState<Record<string, ComputedChart>>({});
+  const [commentaries, setCommentaries] = useState<Record<string, string>>({});
+  const [synastryCommentaries, setSynastryCommentaries] = useState<
+    Record<string, string>
+  >({});
+  const [error, setError] = useState<string | null>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+
+  /** Call /api/generate for one member (individual chart + AI commentary) */
+  async function fetchIndividualChart(member: FamilyMemberInput) {
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "individual",
+        members: [member],
+        tier: "free",
+      }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || `Errore ${res.status}`);
+    }
+    return res.json() as Promise<{
+      chart: ComputedChart;
+      commentary: string;
+      cached: boolean;
+    }>;
+  }
+
+  /** Call /api/generate for a synastry pair */
+  async function fetchSynastryPair(a: FamilyMemberInput, b: FamilyMemberInput) {
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "synastry",
+        members: [a, b],
+        tier: "free",
+      }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || `Errore ${res.status}`);
+    }
+    return res.json() as Promise<{
+      chartA: ComputedChart;
+      chartB: ComputedChart;
+      commentary: string;
+      cached: boolean;
+    }>;
+  }
 
   const handleCalculate = useCallback(async () => {
     if (members.length === 0) return;
 
+    setError(null);
     setIsCalculating(true);
     setShowResults(true);
 
@@ -36,15 +91,76 @@ export default function CalcolaPage() {
       });
     }, 100);
 
-    // Simulate calculation delay (will be replaced by real engine)
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+    try {
+      // Phase 1: Compute charts + AI commentary for all members (parallel)
+      setIsGeneratingAI(true);
+      const individualResults = await Promise.all(
+        members.map((m) =>
+          fetchIndividualChart(m).catch((err) => ({
+            error: err.message,
+            member: m,
+          })),
+        ),
+      );
 
-    setIsCalculating(false);
+      const newCharts: Record<string, ComputedChart> = {};
+      const newCommentaries: Record<string, string> = {};
+
+      for (let i = 0; i < members.length; i++) {
+        const result = individualResults[i];
+        if ("error" in result) {
+          console.warn(
+            `Failed to generate for ${result.member.name}:`,
+            result.error,
+          );
+          continue;
+        }
+        newCharts[members[i].id] = result.chart;
+        newCommentaries[members[i].id] = result.commentary;
+      }
+
+      setCharts(newCharts);
+      setCommentaries(newCommentaries);
+      setIsCalculating(false);
+
+      // Phase 2: Generate synastry for first pair (free tier = 1 pair only)
+      if (members.length >= 2) {
+        const [a, b] = [members[0], members[1]];
+        try {
+          const synResult = await fetchSynastryPair(a, b);
+          // Update charts if they weren't set yet
+          setCharts((prev) => ({
+            ...prev,
+            [a.id]: synResult.chartA,
+            [b.id]: synResult.chartB,
+          }));
+          setSynastryCommentaries({
+            [`${a.id}-${b.id}`]: synResult.commentary,
+          });
+        } catch (synErr) {
+          console.warn("Synastry generation failed:", synErr);
+        }
+      }
+
+      setIsGeneratingAI(false);
+    } catch (err) {
+      console.error("Calculation error:", err);
+      setError(
+        err instanceof Error ? err.message : "Errore durante il calcolo.",
+      );
+      setIsCalculating(false);
+      setIsGeneratingAI(false);
+    }
   }, [members]);
 
   const handleClearAll = useCallback(() => {
     setShowResults(false);
     setIsCalculating(false);
+    setIsGeneratingAI(false);
+    setCharts({});
+    setCommentaries({});
+    setSynastryCommentaries({});
+    setError(null);
   }, []);
 
   return (
@@ -210,7 +326,19 @@ export default function CalcolaPage() {
           <div ref={resultsRef} className="flex lg:col-span-3">
             {showResults ? (
               <div className="w-full">
-                <ResultsPanel members={members} isCalculating={isCalculating} />
+                {error && (
+                  <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+                    ⚠️ {error}
+                  </div>
+                )}
+                <ResultsPanel
+                  members={members}
+                  isCalculating={isCalculating}
+                  charts={charts}
+                  commentaries={commentaries}
+                  synastryCommentaries={synastryCommentaries}
+                  isGeneratingAI={isGeneratingAI}
+                />
               </div>
             ) : (
               <div className="flex w-full flex-1 items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 px-6 py-16 text-center">

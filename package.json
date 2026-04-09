@@ -17,8 +17,11 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.52",
     "@gsap/react": "^2.1.2",
     "@prisma/client": "^7.7.0",
+    "ai": "^6.0.154",
+    "astronomia": "^4.2.0",
     "dotenv": "^17.4.1",
     "framer-motion": "^12.38.0",
     "gsap": "^3.14.2",
