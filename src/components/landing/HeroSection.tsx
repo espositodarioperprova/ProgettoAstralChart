@@ -157,12 +157,13 @@ export function HeroSection() {
 
         <ScrollReveal variant="fadeUp" delay={0.2} immediate>
           <p className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-indigo-100/80 sm:text-xl">
-            Inserisci le date di nascita dei tuoi familiari e scopri come i
-            vostri segni zodiacali si intrecciano.{" "}
+            Non un semplice chatbot.{" "}
             <span className="font-medium text-indigo-200">
-              Sinastrie dettagliate, commenti personalizzati dall&apos;AI,
+              Un motore astronomico reale
             </span>{" "}
-            tutto in italiano.
+            calcola le posizioni planetarie con precisione al secondo
+            d&apos;arco, poi l&apos;intelligenza artificiale interpreta i
+            risultati in italiano — creando commenti unici per la tua famiglia.
           </p>
         </ScrollReveal>
 
@@ -208,6 +209,26 @@ export function HeroSection() {
                 {symbol}
               </span>
             ))}
+          </div>
+        </ScrollReveal>
+
+        {/* Engine trust strip — the subtle IP signal */}
+        <ScrollReveal variant="fadeUp" delay={0.8} immediate>
+          <div className="mx-auto mt-10 flex max-w-2xl flex-wrap items-center justify-center gap-x-6 gap-y-3 rounded-2xl border border-white/[0.08] bg-white/[0.03] px-6 py-4 backdrop-blur-md">
+            <div className="flex items-center gap-2 text-xs text-indigo-200/60">
+              <span className="text-base">🔭</span>
+              <span>Effemeridi astronomiche reali</span>
+            </div>
+            <div className="hidden h-3 w-px bg-white/10 sm:block" />
+            <div className="flex items-center gap-2 text-xs text-indigo-200/60">
+              <span className="text-base">⚙️</span>
+              <span>Motore di calcolo proprietario</span>
+            </div>
+            <div className="hidden h-3 w-px bg-white/10 sm:block" />
+            <div className="flex items-center gap-2 text-xs text-indigo-200/60">
+              <span className="text-base">🧠</span>
+              <span>AI interpretativa, non generativa</span>
+            </div>
           </div>
         </ScrollReveal>
 

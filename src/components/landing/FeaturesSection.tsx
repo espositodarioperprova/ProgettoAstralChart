@@ -30,9 +30,9 @@ const features = [
   },
   {
     icon: "🤖",
-    title: "Commenti AI personalizzati",
+    title: "Motore astronomico + AI",
     description:
-      "Niente oroscopi generici. L'intelligenza artificiale genera interpretazioni profonde basate sui TUOI dati astrologici reali. Ogni famiglia è unica.",
+      'Prima il motore calcola posizioni planetarie reali con effemeridi professionali. Poi l\'AI interpreta quei dati — non li inventa. Un risultato che non otterrai "chiedendo a ChatGPT", perché un LLM da solo non sa fare calcoli astronomici.',
     tier: "premium" as const,
   },
   {

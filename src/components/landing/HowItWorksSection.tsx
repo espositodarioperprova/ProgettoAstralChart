@@ -17,18 +17,18 @@ const steps = [
   },
   {
     number: "02",
-    icon: "🪐",
-    title: "Calcoliamo le carte astrali",
+    icon: "🔭",
+    title: "Il motore calcola — davvero",
     description:
-      "Il nostro motore astrologico calcola il segno solare, la Luna, l'Ascendante e le posizioni planetarie. Poi confronta ogni coppia di familiari.",
-    detail: "Risultati in pochi secondi",
+      "Niente risposte inventate da un chatbot. Il nostro motore astronomico calcola le posizioni reali di Sole, Luna e pianeti usando effemeridi professionali. Poi determina Ascendente, case e aspetti. Risultati che un LLM da solo non può produrre.",
+    detail: "Calcoli reali, non approssimazioni",
   },
   {
     number: "03",
     icon: "✨",
-    title: "Scopri le connessioni",
+    title: "L'AI interpreta i dati reali",
     description:
-      "L'intelligenza artificiale analizza le sinastrie e genera commenti personalizzati — in italiano — sulle dinamiche tra i membri della tua famiglia.",
+      "L'intelligenza artificiale riceve i dati astronomici calcolati dal motore e genera interpretazioni personalizzate — in italiano — sulle dinamiche uniche tra i membri della tua famiglia.",
     detail: "Interpretazioni uniche, non oroscopi generici",
   },
 ];

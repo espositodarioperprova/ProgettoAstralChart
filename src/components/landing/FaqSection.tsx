@@ -15,11 +15,15 @@ const faqs = [
   },
   {
     q: "Quanto è accurato il calcolo del tema natale?",
-    a: "Utilizziamo le effemeridi astronomiche svizzere, lo standard de facto nell'astrologia computazionale, per posizioni planetarie con precisione al secondo d'arco. I nostri commenti AI sono generati su misura per la tua famiglia, non sono oroscopi generici.",
+    a: "Le posizioni planetarie vengono calcolate da un motore astronomico reale basato su effemeridi professionali — lo stesso tipo di dati usati negli osservatori. Non è un chatbot che \"indovina\": Sole, Luna, Ascendente e aspetti sono computati matematicamente con precisione al secondo d'arco. Solo dopo il calcolo, l'AI interpreta i risultati in modo personalizzato. È una differenza fondamentale: un LLM da solo non può calcolare dove si trovava la Luna il giorno della tua nascita.",
   },
   {
     q: 'In che cosa consiste la "sinastria"?',
     a: "La sinastria confronta i temi natali di due persone per capire come i loro pianeti interagiscono. Analizza aspetti come congiunzioni, opposizioni e trigoni per rivelare affinità, tensioni e dinamiche relazionali. È uno degli strumenti più potenti dell'astrologia.",
+  },
+  {
+    q: "Non potrei ottenere lo stesso risultato con ChatGPT?",
+    a: "No, e il motivo è tecnico: un modello linguistico (LLM) come ChatGPT non ha un motore di calcolo astronomico. Può inventare risposte che suonano plausibili, ma non può computare la posizione reale della Luna o calcolare il tuo Ascendente per il giorno, l'ora e il luogo esatti della tua nascita. AstralChart fa entrambe le cose: prima calcola con un motore proprietario, poi interpreta con l'AI. Sono due passaggi distinti — ed è proprio questa combinazione che rende i risultati affidabili e impossibili da replicare con un semplice prompt.",
   },
   {
     q: "I miei dati personali sono al sicuro?",
